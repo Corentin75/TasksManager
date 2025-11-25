@@ -1,13 +1,13 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const Tache = require('models/Tache');
+const Tache = require('./models/Tache');
 
 const app = express();
 app.use(express.json());
 
 
 // Connexion à MongoDB
-mongoose.connect('mongodb://localhost:27017/maBase', {
+mongoose.connect('mongodb://127.0.0.1:27017/maBase', {
   useNewUrlParser: true,
   useUnifiedTopology: true
 })
