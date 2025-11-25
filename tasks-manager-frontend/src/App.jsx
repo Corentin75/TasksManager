@@ -9,9 +9,16 @@ function App() {
       .then(response => response.json())
       .then(data => setTaches(data))
       .catch(err => console.error('Erreur API :', err));
+
+    //tester le delete en dur
+    // fetch(`http://localhost:3000/tache/6925876f9d153ca8512b31c0/delete`, {
+    //   method: "POST"
+    // })
+    //   .then(res => res.json())
+    //   .then(console.log)
+    //   .catch(console.error);
   }, []);
 
-  console.log(taches)
   return (
     <div>
       <h1>Liste des tâches</h1>
