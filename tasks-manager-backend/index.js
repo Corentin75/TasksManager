@@ -1,12 +1,14 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const Tache = require('models/Tache');
-
 const app = express();
+const cors = require('cors');
+
+app.use(cors({
+  origin: 'http://localhost:5173'
+}));
 app.use(express.json());
 
-
-// Connexion à MongoDB
+// Connexion MongoDB
 mongoose.connect('mongodb://localhost:27017/maBase', {
   useNewUrlParser: true,
   useUnifiedTopology: true
@@ -14,24 +16,16 @@ mongoose.connect('mongodb://localhost:27017/maBase', {
 .then(() => console.log('Connecté à MongoDB'))
 .catch(err => console.error('Erreur MongoDB :', err));
 
+// Import des routes
+const tasksRoutes = require('./Route/tasks');
+app.use('/', tasksRoutes);
 
-// Route de test
+// Route test
 app.get('/', (req, res) => {
   res.send('Bienvenue sur l’API de gestion des tâches');
 });
 
-// Route pour récupérer toutes les tâches
-// A BOUGER PLUS TARD DANS /ROUTES/
-app.get('/taches', async (req, res) => {
-  try {
-    const taches = await Tache.find();
-    res.json(taches);
-  } catch (err) {
-    res.status(500).json({ error: 'Erreur serveur' });
-  }
-});
-
-// Lancement du serveur
+// Serveur
 app.listen(3000, () => {
   console.log('Serveur lancé sur http://localhost:3000');
 });
