@@ -18,7 +18,7 @@ mongoose.connect('mongodb://127.0.0.1:27017/maBase', {
 .catch(err => console.error('Erreur MongoDB :', err));
 
 // Import des routes
-const tasksRoutes = require('./Route/tasks');
+const tasksRoutes = require('./routes/tasks');
 app.use('/', tasksRoutes);
 
 // Route test
