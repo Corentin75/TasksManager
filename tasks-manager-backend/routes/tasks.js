@@ -1,4 +1,4 @@
-//  GET /tasks : récupérer toutes les tâches.
+// GET /tasks : récupérer toutes les tâches.
 // GET /tasks/:id : récupérer une tâche par son identifiant.
 // POST /tasks : créer une nouvelle tâche.
 // PUT /tasks/:id : modifier une tâche existante.
