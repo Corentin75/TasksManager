@@ -8,8 +8,9 @@ app.use(cors({
 }));
 app.use(express.json());
 
-// Connexion MongoDB
-mongoose.connect('mongodb://localhost:27017/maBase', {
+
+// Connexion à MongoDB
+mongoose.connect('mongodb://127.0.0.1:27017/maBase', {
   useNewUrlParser: true,
   useUnifiedTopology: true
 })
