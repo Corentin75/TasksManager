@@ -1,0 +1,95 @@
+db.taches.insertMany([
+  {
+    titre: "Préparer la réunion",
+    description: "Créer l'ordre du jour et rassembler les documents",
+    echeance: new Date("2025-12-01"),
+    statut: "en cours",
+    priorite: "haute",
+    auteur: { nom: "Durand", prenom: "Alice", email: "alice@example.com" },
+    categorie: "Travail",
+    etiquettes: ["réunion", "urgent"],
+    sousTaches: [
+      { titre: "Écrire l'ordre du jour", statut: "fait", echeance: new Date("2025-11-20") },
+      { titre: "Rassembler les documents", statut: "en cours", echeance: new Date("2025-11-25") }
+    ],
+    commentaires: [
+      { auteur: "Alice", contenu: "Première ébauche terminée." }
+    ],
+    historiqueModifications: [
+      { champModifié: "statut", ancienneValeur: "non commencé", nouvelleValeur: "en cours" }
+    ]
+  },
+
+  {
+    titre: "Acheter un cadeau",
+    description: "Préparer un cadeau pour l'anniversaire de Paul",
+    echeance: new Date("2025-12-10"),
+    statut: "non commencé",
+    priorite: "moyenne",
+    auteur: { nom: "Martin", prenom: "Sophie", email: "sophie@example.com" },
+    categorie: "Personnel",
+    etiquettes: ["anniversaire", "cadeau"],
+    sousTaches: [
+      { titre: "Choisir le cadeau", statut: "non commencé", echeance: new Date("2025-12-05") }
+    ],
+    commentaires: [],
+    historiqueModifications: []
+  },
+
+  {
+    titre: "Refaire la peinture du salon",
+    description: "Choisir la couleur et acheter la peinture",
+    echeance: new Date("2025-12-20"),
+    statut: "en cours",
+    priorite: "basse",
+    auteur: { nom: "Bernard", prenom: "Luc", email: "luc@example.com" },
+    categorie: "Maison",
+    etiquettes: ["travaux"],
+    sousTaches: [
+      { titre: "Choisir la couleur", statut: "fait" },
+      { titre: "Acheter la peinture", statut: "non commencé" }
+    ],
+    commentaires: [
+      { auteur: "Luc", contenu: "Idée de couleur validée." }
+    ],
+    historiqueModifications: []
+  },
+
+  {
+    titre: "Finaliser le rapport financier",
+    description: "Compléter les sections manquantes et valider les chiffres",
+    echeance: new Date("2025-11-30"),
+    statut: "en retard",
+    priorite: "haute",
+    auteur: { nom: "Robert", prenom: "Paul", email: "paul@example.com" },
+    categorie: "Travail",
+    etiquettes: ["finance", "urgent"],
+    sousTaches: [
+      { titre: "Compléter les chiffres", statut: "en retard" },
+      { titre: "Relire", statut: "non commencé" }
+    ],
+    commentaires: [
+      { auteur: "Paul", contenu: "Besoin de vérifier les données du dernier trimestre." }
+    ],
+    historiqueModifications: [
+      { champModifié: "statut", ancienneValeur: "en cours", nouvelleValeur: "en retard" }
+    ]
+  },
+
+  {
+    titre: "Organiser un dîner",
+    description: "Inviter des amis et préparer un menu",
+    echeance: new Date("2025-12-15"),
+    statut: "non commencé",
+    priorite: "moyenne",
+    auteur: { nom: "Petit", prenom: "Emma", email: "emma@example.com" },
+    categorie: "Personnel",
+    etiquettes: ["dîner", "amis"],
+    sousTaches: [
+      { titre: "Faire la liste des invités", statut: "non commencé" },
+      { titre: "Choisir le menu", statut: "non commencé" }
+    ],
+    commentaires: [],
+    historiqueModifications: []
+  }
+]);
