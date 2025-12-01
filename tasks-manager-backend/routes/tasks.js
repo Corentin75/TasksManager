@@ -1,14 +1,17 @@
-// ✅ GET /tasks : récupérer toutes les tâches.
-// ❌ GET /tasks/:id : récupérer une tâche par son identifiant.
-// ❌ POST /tasks : créer une nouvelle tâche.
-// ❌ PUT /tasks/:id : modifier une tâche existante.
-// ❌ DELETE /tasks/:id : supprimer une tâche.
-//
+// GET /tasks : récupérer toutes les tâches. ✅
+// GET /tasks/:id : récupérer une tâche par son identifiant. ✅
+// POST /tasks : créer une nouvelle tâche. ✅
+// PUT /tasks/:id : modifier une tâche existante. ✅
+// DELETE /tasks/:id : supprimer une tâche. ✅
 // Fonctionnalités complémentaires obligatoires :
-// ❌ Filtrer les tâches (statut, priorité, catégorie, étiquette, échéance).
-// ❌ Trier les résultats (par date, priorité, etc.).
-// ❌ Gérer les sous-tâches et commentaires.
-// ❌ (Optionnel) Historiser les modifications
+// Filtrer les tâches (statut, priorité, catégorie, étiquette, échéance). à faire dans le back
+// Trier les résultats (par date, priorité, etc.).
+
+// Gérer les sous-tâches et commentaires.
+//Pouvoir afficher tous les commentaires
+
+
+// (Optionnel) Historiser les modifications ✅
 
 const express = require('express');
 const router = express.Router();
@@ -53,5 +56,164 @@ router.post('/tache/:id/delete', async (req, res) => {
     res.status(500).json({ error: 'Erreur lors de la suppression de la tâche.' });
   }
 });
+
+// Route pour créer une nouvelle tâche
+router.post('/nouvelletache', async (req, res) => {
+  try {
+    const {
+      titre,
+      description,
+      echeance,
+      statut,
+      priorite, 
+      auteur,
+      categorie,
+      etiquettes,
+      sousTaches,
+      commentaires
+    } = req.body;
+
+    const nouvelleTache = new Tache({
+      titre,
+      description,
+      echeance,
+      statut,
+      priorite,
+      auteur,
+      categorie,
+      etiquettes,
+      sousTaches,
+      commentaires
+      // dateCreation, historiqueModifications seront créés automatiquement
+    });
+
+    const tacheEnregistree = await nouvelleTache.save();
+    res.status(201).json(tacheEnregistree);
+
+  } catch (err) {
+    console.error("Erreur POST /taches :", err);
+    res.status(500).json({ error: "Erreur lors de la création de la tâche." });
+  }
+});
+
+router.put('/taches/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updates = req.body;
+
+    // 1. On récupère la tâche avant modification
+    const ancienneTache = await Tache.findById(id);
+
+    if (!ancienneTache) {
+      return res.status(404).json({ message: "Tâche non trouvée" });
+    }
+
+    // 2. On va construire l'historique des changements
+    const historique = [];
+
+    for (const champ in updates) {
+      if (JSON.stringify(ancienneTache[champ]) !== JSON.stringify(updates[champ])) {
+        historique.push({
+          champModifié: champ,
+          ancienneValeur: JSON.stringify(ancienneTache[champ]),
+          nouvelleValeur: JSON.stringify(updates[champ]),
+          date: new Date()
+        });
+      }
+    }
+
+    // 3. On applique les updates
+    Object.assign(ancienneTache, updates);
+
+    // 4. On pousse l'historique s'il y a des modifications
+    if (historique.length > 0) {
+      ancienneTache.historiqueModifications.push(...historique);
+    }
+
+    // 5. On sauvegarde
+    const tacheModifiee = await ancienneTache.save();
+
+    res.json({
+      message: "Tâche mise à jour avec historique",
+      tache: tacheModifiee
+    });
+
+  } catch (err) {
+    console.error("Erreur PUT /taches/:id :", err);
+    res.status(500).json({ error: "Erreur lors de la modification de la tâche." });
+  }
+});
+
+
+
+
+
+//-----------------------------SOUS-TACHE---------------------------------- 
+
+
+
+//route pour ajouter une sous-tache dans la tache 
+router.post('/taches/:id/sous-taches', async (req, res) => { // NE PAS OUBLIER HISTORIQUE
+  try {
+    const { id } = req.params;
+    const nouvelleSousTache = req.body;  // { titre, statut, echeance }
+
+    const tache = await Tache.findById(id);
+    if (!tache) return res.status(404).json({ message: "Tâche non trouvée" });
+
+    tache.sousTaches.push(nouvelleSousTache);
+
+    await tache.save();
+    res.status(201).json(tache);
+
+  } catch (err) {
+    res.status(500).json({ error: "Erreur lors de l'ajout de la sous-tâche." });
+  }
+});
+
+//route pour modifier une sous-tache : 
+router.put('/taches/:id/sous-taches/:subId', async (req, res) => { // NE PAS OUBLIER HISTORIQUE
+  try {
+    const { id, subId } = req.params;
+    const updates = req.body;
+
+    const tache = await Tache.findById(id);
+    if (!tache) return res.status(404).json({ message: "Tâche non trouvée" });
+
+    const sousTache = tache.sousTaches.id(subId);
+    if (!sousTache) return res.status(404).json({ message: "Sous-tâche non trouvée" });
+
+    Object.assign(sousTache, updates);
+
+    await tache.save();
+    res.json(tache);
+
+  } catch (err) {
+    res.status(500).json({ error: "Erreur lors de la modification de la sous-tâche." });
+  }
+});
+
+//supprimer une sous-tache :
+router.delete('/taches/:id/sous-taches/:subId', async (req, res) => { // NE PAS OUBLIER HISTORIQUE
+  try {
+    const { id, subId } = req.params;
+
+    const tache = await Tache.findById(id);
+    if (!tache) return res.status(404).json({ message: "Tâche non trouvée" });
+
+    const sousTache = tache.sousTaches.id(subId);
+    if (!sousTache) return res.status(404).json({ message: "Sous-tâche non trouvée" });
+
+    sousTache.deleteOne(); // supprime proprement un élément imbriqué
+
+    await tache.save();
+    res.json({ message: "Sous-tâche supprimée avec succès" });
+
+  } catch (err) {
+    res.status(500).json({ error: "Erreur lors de la suppression de la sous-tâche." });
+  }
+});
+
+
 
 module.exports = router;

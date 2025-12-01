@@ -16,6 +16,7 @@ const tacheSchema = new mongoose.Schema({
   etiquettes: [String],
   sousTaches: [
     {
+      _id: { type: mongoose.Schema.Types.ObjectId, auto: true },
       titre: String,
       statut: String,
       echeance: Date
