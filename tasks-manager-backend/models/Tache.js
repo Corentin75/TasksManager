@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
 
 const tacheSchema = new mongoose.Schema({
-  titre: String,
-  description: String,
+  titre: { type: String, required: true },
+  description: {type: String, required: true },
   dateCreation: { type: Date, default: Date.now },
   echeance: Date,
   statut: String,
