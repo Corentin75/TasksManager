@@ -4,6 +4,9 @@ import TaskForm from './components/TaskForm';
 import FilterBar from './components/FilterBar';
 import './App.css';
 
+// Configuration de l'API URL depuis les variables d'environnement
+const API_URL = import.meta.env.VITE_API_URL;
+
 function App() {
   const [taches, setTaches] = useState([]);
   const [filteredTaches, setFilteredTaches] = useState([]);
@@ -25,7 +28,10 @@ function App() {
 
   const fetchTaches = async () => {
     try {
-      const response = await fetch('http://localhost:3000/taches');
+      const response = await fetch(`${API_URL}/taches`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
       const data = await response.json();
       setTaches(data);
     } catch (err) {
@@ -57,9 +63,12 @@ function App() {
 
   const handleDeleteTask = async (id) => {
     try {
-      await fetch(`http://localhost:3000/tache/${id}/delete`, {
+      const response = await fetch(`${API_URL}/tache/${id}/delete`, {
         method: 'POST'
       });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
       fetchTaches();
     } catch (err) {
       console.error('Erreur lors de la suppression :', err);
@@ -82,6 +91,7 @@ function App() {
         <TaskForm 
           onClose={() => setShowForm(false)}
           onSave={fetchTaches}
+          apiUrl={API_URL}
         />
       )}
 
