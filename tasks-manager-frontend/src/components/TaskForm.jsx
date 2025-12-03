@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import './TaskForm.css';
 
-function TaskForm({ onClose, onSave }) {
+function TaskForm({ onClose, onSave, apiUrl }) {
   const [formData, setFormData] = useState({
     titre: '',
     description: '',
@@ -30,8 +30,9 @@ function TaskForm({ onClose, onSave }) {
         : []
     };
 
+    console.log(apiUrl)
     try {
-      await fetch('http://localhost:3000/tasks', {
+      await fetch(`${apiUrl}/nouvelletache`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

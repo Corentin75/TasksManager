@@ -1,0 +1,53 @@
+services:
+  mongodb:
+    image: mongo:7.0
+    container_name: taskmanager-mongodb
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME_FILE: /run/secrets/mongo_root_user
+      MONGO_INITDB_ROOT_PASSWORD_FILE: /run/secrets/mongo_root_password
+    secrets:
+      - mongo_root_user
+      - mongo_root_password
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - taskmanager-network
+
+  backend:
+    build:
+      context: ./tasks-manager-backend
+    container_name: taskmanager-backend
+    restart: unless-stopped
+    secrets:
+      - mongo_root_user
+      - mongo_root_password
+    networks:
+      - taskmanager-network
+    ports:
+    - "3001:3000"  # ← Port 3001 pour Docker, 3000 pour local
+    environment:
+      - PORT=3000  # Port interne du conteneur
+
+  frontend:
+    build:
+      context: ./tasks-manager-frontend
+    container_name: taskmanager-frontend
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    networks:
+      - taskmanager-network
+
+networks:
+  taskmanager-network:
+    driver: bridge
+
+volumes:
+  mongodb_data:
+
+secrets:
+  mongo_root_user:
+    file: ./secrets/mongo_root_user.txt
+  mongo_root_password:
+    file: ./secrets/mongo_root_password.txt
