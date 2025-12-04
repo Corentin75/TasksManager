@@ -32,25 +32,22 @@ echo "votre-mot-de-passe-securise" > secrets/mongo_root_password.txt
 ```bash
 cd tasks-manager-backend
 cp .env.example .env
+cp .env.local.example .env.local
 ```
 
 Contenu du fichier `tasks-manager-backend/.env` :
 ```
-#.env.example (Pour Docker)
+# Exemple de fichier .env pour exécution en Docker
 NODE_ENV=production
 PORT=3001
 MONGO_DB=prodBase
 CORS_ORIGINS=http://localhost:8080
 ```
 #### .env.local (Développement local, sans Docker)
-```bash
-cd tasks-manager-backend
-cp .env.local.example .env.local
-```
 
 Contenu du fichier `tasks-manager-backend/.env.local` :
 ```
-#.env.local.exemple (Pour dev en Local, avec npm run dev)
+# Exemple de fichier .env.local pour développement local (npm run dev)
 NODE_ENV=development
 MONGO_HOST=127.0.0.1
 MONGO_PORT=27017
@@ -64,22 +61,19 @@ CORS_ORIGINS=http://localhost:5173
 ```bash
 cd tasks-manager-frontend
 cp .env.example .env
+cp .env.local.example .env.local
 ```
 
 Contenu du fichier `tasks-manager-frontend/.env` :
 ```
-#.env.example (pour Docker)
+# Exemple de fichier .env pour exécution en Docker
 VITE_API_URL=http://backend:3000
 ```
 #### .env.local (Développement local, sans Docker)
-```bash
-cd frontend
-cp .env.local.example .env.local
-```
 
 Contenu du fichier `tasks-manager-frontend/.env.local` :
 ```
-# .env.local.example (pour dev en local)
+# Exemple de fichier .env.local pour développement local (npm run dev)
 VITE_API_URL=http://localhost:3000
 ```
 
