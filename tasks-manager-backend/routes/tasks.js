@@ -172,7 +172,7 @@ router.post('/taches/:id/sous-taches', async (req, res) => { // NE PAS OUBLIER H
 });
 
 //route pour modifier une sous-tache : 
-router.put('/taches/:id/sous-taches/:subId', async (req, res) => { // NE PAS OUBLIER HISTORIQUE
+router.put('/taches/:id/sous-taches/:subId', async (req, res) => {
   try {
     const { id, subId } = req.params;
     const updates = req.body;
@@ -183,12 +183,37 @@ router.put('/taches/:id/sous-taches/:subId', async (req, res) => { // NE PAS OUB
     const sousTache = tache.sousTaches.id(subId);
     if (!sousTache) return res.status(404).json({ message: "Sous-tâche non trouvée" });
 
+    // Copie de l’ancienne sous-tâche (pour comparer)
+    const ancienneSousTache = sousTache.toObject();
+
+    // Construction de l’historique
+    const historique = [];
+
+    for (const champ in updates) {
+      if (JSON.stringify(ancienneSousTache[champ]) !== JSON.stringify(updates[champ])) {
+        historique.push({
+          champModifié: `sousTache.${champ}`,
+          ancienneValeur: JSON.stringify(ancienneSousTache[champ]),
+          nouvelleValeur: JSON.stringify(updates[champ]),
+          date: new Date()
+        });
+      }
+    }
+
+    // Mise à jour
     Object.assign(sousTache, updates);
 
+    // Ajout à l’historique
+    if (historique.length > 0) {
+      tache.historiqueModifications.push(...historique);
+    }
+
     await tache.save();
+
     res.json(tache);
 
   } catch (err) {
+    console.error(err);
     res.status(500).json({ error: "Erreur lors de la modification de la sous-tâche." });
   }
 });
