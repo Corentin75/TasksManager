@@ -34,7 +34,7 @@ cd tasks-manager-backend
 cp .env.example .env
 ```
 
-Contenu du fichier `tasks-manager-backend/.env.example` :
+Contenu du fichier `tasks-manager-backend/.env` :
 ```
 #.env.example (Pour Docker)
 NODE_ENV=production
@@ -45,10 +45,10 @@ CORS_ORIGINS=http://localhost:8080
 #### .env.local (Développement local, sans Docker)
 ```bash
 cd tasks-manager-backend
-cp .env.local.example .env
+cp .env.local.example .env.local
 ```
 
-Contenu du fichier `tasks-manager-backend/.env.local.example` :
+Contenu du fichier `tasks-manager-backend/.env.local` :
 ```
 #.env.local.exemple (Pour dev en Local, avec npm run dev)
 NODE_ENV=development
@@ -66,7 +66,7 @@ cd tasks-manager-frontend
 cp .env.example .env
 ```
 
-Contenu du fichier `tasks-manager-frontend/.env.example` :
+Contenu du fichier `tasks-manager-frontend/.env` :
 ```
 #.env.example (pour Docker)
 VITE_API_URL=http://backend:3000
@@ -74,10 +74,10 @@ VITE_API_URL=http://backend:3000
 #### .env.local (Développement local, sans Docker)
 ```bash
 cd frontend
-cp .env.local.example .env
+cp .env.local.example .env.local
 ```
 
-Contenu du fichier `frontend/.env.local.example` :
+Contenu du fichier `tasks-manager-frontend/.env.local` :
 ```
 # .env.local.example (pour dev en local)
 VITE_API_URL=http://localhost:3000
