@@ -39,7 +39,7 @@ function TaskCard({ tache, onDelete, onEdit }) {
         <div className="task-actions">
           <button 
             className="btn-icon"
-            onClick={() => onEdit(tache._id)}
+            onClick={() => onEdit(tache)}
             title="Modifier"
           >
             ✏️

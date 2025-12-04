@@ -17,6 +17,7 @@ function App() {
     categorie: '',
     search: ''
   });
+  const [taskToEdit, setTaskToEdit] = useState(null);
 
   useEffect(() => {
     fetchTaches();
@@ -89,11 +90,16 @@ function App() {
 
       {showForm && (
         <TaskForm 
-          onClose={() => setShowForm(false)}
+          onClose={() => {
+            setShowForm(false);
+            setTaskToEdit(null); // reset
+          }}
           onSave={fetchTaches}
           apiUrl={API_URL}
+          initialData={taskToEdit}       // 🔥 important
         />
       )}
+
 
       <FilterBar 
         filters={filters}
@@ -103,8 +109,12 @@ function App() {
       <TaskList 
         taches={filteredTaches}
         onDelete={handleDeleteTask}
-        onEdit={(id) => console.log('Edit task:', id)}
+        onEdit={(task) => {
+          setTaskToEdit(task);
+          setShowForm(true);
+        }}
       />
+
     </div>
   );
 }

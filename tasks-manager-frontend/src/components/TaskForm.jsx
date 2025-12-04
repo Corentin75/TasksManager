@@ -1,16 +1,17 @@
 import { useState } from 'react';
 import './TaskForm.css';
 
-function TaskForm({ onClose, onSave, apiUrl }) {
+function TaskForm({ onClose, onSave, apiUrl, initialData = null }) {
   const [formData, setFormData] = useState({
-    titre: '',
-    description: '',
-    statut: 'À faire',
-    priorite: 'Moyenne',
-    categorie: '',
-    echeance: '',
-    etiquettes: ''
+    titre: initialData?.titre || '',
+    description: initialData?.description || '',
+    statut: initialData?.statut || 'À faire',
+    priorite: initialData?.priorite || 'Moyenne',
+    categorie: initialData?.categorie || '',
+    echeance: initialData?.echeance ? initialData.echeance.split('T')[0] : '',
+    etiquettes: initialData?.etiquettes?.join(', ') || ''
   });
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -22,7 +23,7 @@ function TaskForm({ onClose, onSave, apiUrl }) {
       alert('Le titre est requis');
       return;
     }
-    
+
     const taskData = {
       ...formData,
       etiquettes: formData.etiquettes 
@@ -30,22 +31,27 @@ function TaskForm({ onClose, onSave, apiUrl }) {
         : []
     };
 
-    console.log(apiUrl)
+    const url = initialData
+      ? `${apiUrl}/taches/${initialData._id}`   // EDIT
+      : `${apiUrl}/nouvelletache`;             // CREATION
+
+    const method = initialData ? 'PUT' : 'POST';
+
     try {
-      await fetch(`${apiUrl}/nouvelletache`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+      await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(taskData)
       });
-      
+
       onSave();
       onClose();
+
     } catch (err) {
-      console.error('Erreur lors de la création :', err);
+      console.error('Erreur lors de l’enregistrement :', err);
     }
   };
+
 
   return (
     <div className="task-form-overlay">
@@ -157,7 +163,7 @@ function TaskForm({ onClose, onSave, apiUrl }) {
               Annuler
             </button>
             <button onClick={handleSubmit} className="btn-primary">
-              ✓ Créer la tâche
+              {initialData ? "💾 Modifier la tâche" : "✓ Créer la tâche"}
             </button>
           </div>
         </div>
