@@ -49,7 +49,6 @@ function readSecret(name) {
 
 let mongoUrl;
 
-// ---- CASE 1 : Backend tourne DANS Docker ----
 if (isRunningInDocker()) {
   const user = readSecret("mongo_root_user");
   const pass = readSecret("mongo_root_password");
@@ -58,15 +57,12 @@ if (isRunningInDocker()) {
 
   console.log("🐳 Backend détecté DANS Docker → Mongo = mongodb");
 
-// ---- CASE 2 : Backend tourne en LOCAL ----
 } else {
   mongoUrl = `mongodb://127.0.0.1:27017/${MONGO_DB}`;
   console.log("💻 Backend détecté EN LOCAL → Mongo = localhost");
 }
 
-console.log("🔧 URL Mongo utilisée :", mongoUrl);
-
-// ---- Connexion ----
+// ---- Connexion à MongoDB ----
 mongoose.connect(mongoUrl)
   .then(() => console.log("✅ Connecté à MongoDB"))
   .catch(err => console.error("❌ Erreur MongoDB :", err));
@@ -101,5 +97,5 @@ process.on('SIGTERM', () => {
 
 // Serveur
 app.listen(PORT, () => {
-  console.log(`🚀 Serveur lancé sur le port : ${PORT}`);
+  console.log(`🚀 Serveur lancé !`);
 });

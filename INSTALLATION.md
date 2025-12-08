@@ -7,6 +7,11 @@
 
 ## 🔧 Configuration initiale
 
+Le backend s'exécute dans un container Docker sur le port 3000 à l'intérieur du container.
+Pour éviter les conflits avec votre serveur de développement local (port 3000), le port 3000 du container est mappé sur le port 3001 de votre machine locale.
+
+Pour évtier toutes confusions, une bases de données MongoDB est dédié à la "production" sous Docker, et une autre est dédié au développement en local.
+
 ### 1. Créer le dossier des secrets
 
 ```bash
@@ -37,7 +42,7 @@ cp .env.local.example .env.local
 
 Contenu du fichier `tasks-manager-backend/.env` :
 ```
-# Exemple de fichier .env pour exécution en Docker
+# Exemple d'un fichier .env fonctionnel pour exécution en Docker
 NODE_ENV=production
 PORT=3001
 MONGO_DB=prodBase
@@ -47,7 +52,7 @@ CORS_ORIGINS=http://localhost:8080
 
 Contenu du fichier `tasks-manager-backend/.env.local` :
 ```
-# Exemple de fichier .env.local pour développement local (npm run dev)
+# Exemple d'un fichier .env.local fonctionnel pour développement local (npm run dev)
 NODE_ENV=development
 MONGO_HOST=127.0.0.1
 MONGO_PORT=27017
@@ -66,14 +71,14 @@ cp .env.local.example .env.local
 
 Contenu du fichier `tasks-manager-frontend/.env` :
 ```
-# Exemple de fichier .env pour exécution en Docker
+# Exemple d'un fichier .env fonctionnel pour exécution en Docker
 VITE_API_URL=http://backend:3000
 ```
 #### .env.local (Développement local, sans Docker)
 
 Contenu du fichier `tasks-manager-frontend/.env.local` :
 ```
-# Exemple de fichier .env.local pour développement local (npm run dev)
+# Exemple d'un fichier .env.local fonctionnel pour développement local (npm run dev)
 VITE_API_URL=http://localhost:3000
 ```
 
@@ -126,7 +131,8 @@ docker-compose down -v
 
 Une fois démarré, l'application est accessible sur :
 
-**http://localhost:8080**
+Pour au frontend local :  **http://localhost:8080**
+Accès au backend local : **http://localhost:3001**
 
 ## 🔍 Vérification du fonctionnement
 
@@ -183,22 +189,23 @@ Pour le développement local (sans Docker) :
 ### Backend
 
 ```bash
-cd backend
+cd tasks-manager-backend
 npm install
 npm install nodemon
-# Modifier server.js pour utiliser MongoDB local
 npm run dev
 ```
 
 ### Frontend
 
 ```bash
-cd frontend
+cd tasks-manager-frontend
 npm install
 npm run dev
 ```
 
-Accès sur http://localhost:5173
+**⚠️ Attention** l'accès à l'application n'est pas le même qu'en production :
+Le frontend est dispo sur **http://localhost:5173**
+Le backend se trouve sur **http://localhost:3000**
 
 ## 📦 Structure du projet
 
