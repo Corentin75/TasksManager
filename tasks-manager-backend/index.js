@@ -2,13 +2,34 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const fs = require('fs');
+const client = require('prom-client')
 
 
 const app = express();
 
 const dotenv = require("dotenv");
 
+// Registry
+const register = new client.Registry();
+client.collectDefaultMetrics({ register });
 
+const httpRequestCounter = new client.Counter({
+  name: 'http_requests_total',
+  help: 'Nombre total de requêtes HTTP',
+});
+register.registerMetric(httpRequestCounter);
+
+// Middleware pour logguer les requêtes
+app.use((req, res, next) => {
+  httpRequestCounter.inc();
+  next();
+});
+
+// Endpoint /metrics
+app.get('/metrics', async (req, res) => {
+  res.set('Content-Type', register.contentType);
+  res.send(await register.metrics());
+});
 
 // Optionnel : charger .env.local en dev seulement
 if (process.env.NODE_ENV !== "production") {
