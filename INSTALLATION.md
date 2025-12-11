@@ -12,9 +12,15 @@ Pour éviter les conflits avec votre serveur de développement local (port 3000)
 
 Pour évtier toutes confusions, une bases de données MongoDB est dédié à la "production" sous Docker, et une autre est dédié au développement en local.
 
+Pour cloner le dépot :
+```bash
+git clone https://github.com/Corentin75/TasksManager
+```
+
 ### 1. Créer le dossier des secrets
 
 ```bash
+cd TasksManager
 mkdir secrets
 ```
 
