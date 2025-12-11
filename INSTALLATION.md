@@ -28,13 +28,13 @@ mkdir secrets
 
 ```bash
 # Créer le fichier pour le nom d'utilisateur MongoDB
-echo "admin" > secrets/mongo_root_user.txt
+printf "admin" > secrets/mongo_root_user.txt
 
 # Créer le fichier pour le mot de passe MongoDB (changez "votre-mot-de-passe-securise")
-echo "votre-mot-de-passe-securise" > secrets/mongo_root_password.txt
+printf "votre-mot-de-passe-securise" > secrets/mongo_root_password.txt
 ```
 
-⚠️ **Important** : Remplacez `votre-mot-de-passe-securise` par un mot de passe fort !
+⚠️ **Important** : Remplacez `votre-mot-de-passe-securise` par un mot de passe fort ! Deplus veuillez ne jamais le changer une fois l'application lancer une fois, cela risque de donner une erreur d'acces à la base de données.
 
 ### 3. Créer les fichiers .env
 
