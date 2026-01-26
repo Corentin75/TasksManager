@@ -27,22 +27,31 @@ router.get('/taches', async (req, res) => {
       etiquette,
       avant,
       apres,
-      q
+      q,
+      tri,
+      ordre
     } = req.query;
 
     const filter = {};
 
+    // Filtres simples
     if (statut) filter.statut = statut;
     if (priorite) filter.priorite = priorite;
     if (categorie) filter.categorie = categorie;
-    if (etiquette) filter.etiquettes = etiquette; 
 
-    if (avant || apres) {
-      filter.dateLimite = {};
-      if (avant) filter.dateLimite.$lte = new Date(avant);
-      if (apres) filter.dateLimite.$gte = new Date(apres);
+    // Étiquettes
+    if (etiquette) {
+      filter.etiquettes = { $in: [etiquette] };
     }
 
+    // Dates (échéance)
+    if (avant || apres) {
+      filter.echeance = {};
+      if (avant) filter.echeance.$lte = new Date(avant);
+      if (apres) filter.echeance.$gte = new Date(apres);
+    }
+
+    // Recherche texte
     if (q) {
       filter.$or = [
         { titre: { $regex: q, $options: 'i' } },
@@ -50,11 +59,18 @@ router.get('/taches', async (req, res) => {
       ];
     }
 
-    const taches = await Tache.find(filter);
-    res.json(taches);
+    // TRI
+    let sort = {};
+    if (tri) {
+      sort[tri] = ordre === 'desc' ? -1 : 1;
+    }
 
+    const taches = await Tache.find(filter).sort(sort);
+
+    res.json(taches);
   } catch (err) {
-    res.status(500).json({ error: 'Erreur lors de la récupération des tâches.' });
+    console.error(err);
+    res.status(500).json({ error: 'Erreur récupération des tâches' });
   }
 });
 
@@ -159,7 +175,7 @@ router.put('/taches/:id', async (req, res) => {
 
     // 4. On pousse l'historique s'il y a des modifications
     if (historique.length > 0) {
-      ancienneTache.historiqueModifications.push(...historique);
+      ancienneTache.historiqueModifications.unshift(...historique);
     }
 
     // 5. On sauvegarde
@@ -209,7 +225,7 @@ router.post('/taches/:id/commentaires', async (req, res) => {
     tache.commentaires.push(commentaire);
 
     // Historique
-    tache.historiqueModifications.push({
+    tache.historiqueModifications.unshift({
       champModifié: "commentaires",
       ancienneValeur: null,
       nouvelleValeur: JSON.stringify(commentaire),
@@ -255,7 +271,7 @@ router.put('/taches/:tacheId/commentaires/:commentaireId', async (req, res) => {
     }
 
     // Historique
-    tache.historiqueModifications.push({
+    tache.historiqueModifications.unshift({
       champModifié: "commentaire",
       ancienneValeur: commentaire.contenu,
       nouvelleValeur: contenu,
@@ -297,7 +313,7 @@ router.delete('/taches/:tacheId/commentaires/:commentaireId', async (req, res) =
     }
 
     // Historique
-    tache.historiqueModifications.push({
+    tache.historiqueModifications.unshift({
       champModifié: "commentaire",
       ancienneValeur: commentaire.contenu,
       nouvelleValeur: "Commentaire supprimé",
@@ -340,7 +356,7 @@ router.post('/taches/:id/sous-taches', async (req, res) => {
     tache.sousTaches.push(nouvelleSousTache);
 
     // Historique
-    tache.historiqueModifications.push({
+    tache.historiqueModifications.unshift({
       champModifié: "sousTaches",
       ancienneValeur: null,
       nouvelleValeur: JSON.stringify(nouvelleSousTache),
@@ -394,7 +410,7 @@ router.put('/taches/:id/sous-taches/:subId', async (req, res) => {
 
     // Ajout à l’historique
     if (historique.length > 0) {
-      tache.historiqueModifications.push(...historique);
+      tache.historiqueModifications.unshift(...historique);
     }
 
     await tache.save();
@@ -423,7 +439,7 @@ router.delete('/taches/:id/sous-taches/:subId', async (req, res) => {
     }
 
     // Historique AVANT suppression
-    tache.historiqueModifications.push({
+    tache.historiqueModifications.unshift({
       champModifié: "sousTaches",
       ancienneValeur: JSON.stringify(sousTache),
       nouvelleValeur: "Sous-tâche supprimée",

@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
+import { Routes, Route } from 'react-router-dom';
 import TaskList from './components/TaskList';
 import TaskForm from './components/TaskForm';
 import FilterBar from './components/FilterBar';
+import TaskDetails from './components/TaskDetails';
 import './App.css';
 
 // Configuration de l'API URL depuis les variables d'environnement
@@ -9,13 +11,17 @@ const API_URL = import.meta.env.VITE_API_URL;
 
 function App() {
   const [taches, setTaches] = useState([]);
-  const [filteredTaches, setFilteredTaches] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [filters, setFilters] = useState({
     statut: '',
     priorite: '',
     categorie: '',
-    search: ''
+    etiquette: '',
+    avant: '',
+    apres: '',
+    search: '',
+    tri: '',
+    ordre: 'asc'
   });
   const [taskToEdit, setTaskToEdit] = useState(null);
 
@@ -24,42 +30,29 @@ function App() {
   }, []);
 
   useEffect(() => {
-    applyFilters();
-  }, [taches, filters]);
+    fetchTaches();
+  }, [filters]);
 
   const fetchTaches = async () => {
     try {
-      const response = await fetch(`${API_URL}/taches`);
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
+      const params = new URLSearchParams();
+
+      if (filters.statut) params.append('statut', filters.statut);
+      if (filters.priorite) params.append('priorite', filters.priorite);
+      if (filters.categorie) params.append('categorie', filters.categorie);
+      if (filters.etiquette) params.append('etiquette', filters.etiquette);
+      if (filters.avant) params.append('avant', filters.avant);
+      if (filters.apres) params.append('apres', filters.apres);
+      if (filters.search) params.append('q', filters.search);
+      if (filters.tri) params.append('tri', filters.tri);
+      if (filters.ordre) params.append('ordre', filters.ordre);
+
+      const response = await fetch(`${API_URL}/taches?${params.toString()}`);
       const data = await response.json();
       setTaches(data);
     } catch (err) {
       console.error('Erreur API :', err);
     }
-  };
-
-  const applyFilters = () => {
-    let filtered = [...taches];
-
-    if (filters.statut) {
-      filtered = filtered.filter(t => t.statut === filters.statut);
-    }
-    if (filters.priorite) {
-      filtered = filtered.filter(t => t.priorite === filters.priorite);
-    }
-    if (filters.categorie) {
-      filtered = filtered.filter(t => t.categorie === filters.categorie);
-    }
-    if (filters.search) {
-      filtered = filtered.filter(t => 
-        t.titre?.toLowerCase().includes(filters.search.toLowerCase()) ||
-        t.description?.toLowerCase().includes(filters.search.toLowerCase())
-      );
-    }
-
-    setFilteredTaches(filtered);
   };
 
   const handleDeleteTask = async (id) => {
@@ -80,7 +73,7 @@ function App() {
     <div className="app-container">
       <header className="app-header">
         <h1>📋 Gestionnaire de Tâches</h1>
-        <button 
+        <button
           className="btn-primary"
           onClick={() => setShowForm(!showForm)}
         >
@@ -89,7 +82,7 @@ function App() {
       </header>
 
       {showForm && (
-        <TaskForm 
+        <TaskForm
           onClose={() => {
             setShowForm(false);
             setTaskToEdit(null); // reset
@@ -100,21 +93,25 @@ function App() {
         />
       )}
 
-
-      <FilterBar 
-        filters={filters}
-        onFilterChange={setFilters}
-      />
-
-      <TaskList 
-        taches={filteredTaches}
-        onDelete={handleDeleteTask}
-        onEdit={(task) => {
-          setTaskToEdit(task);
-          setShowForm(true);
-        }}
-      />
-
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <>
+              <FilterBar filters={filters} onFilterChange={setFilters} />
+              <TaskList
+                taches={taches}
+                onDelete={handleDeleteTask}
+                onEdit={(task) => {
+                  setTaskToEdit(task);
+                  setShowForm(true);
+                }}
+              />
+            </>
+          }
+        />
+        <Route path="/taches/:id" element={<TaskDetails />} />
+      </Routes>
     </div>
   );
 }
