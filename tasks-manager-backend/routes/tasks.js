@@ -194,24 +194,37 @@ router.post('/taches/:id/commentaires', async (req, res) => {
       });
     }
 
-    const commentaire = {
-      auteur,
-      contenu
-    };
-
-    const tache = await Tache.findByIdAndUpdate(
-      id,
-      { $push: { commentaires: commentaire } },
-      { new: true }
-    );
+    const tache = await Tache.findById(id);
 
     if (!tache) {
       return res.status(404).json({ error: "Tâche introuvable." });
     }
 
-    res.status(201).json(tache.commentaires);
+    const commentaire = {
+      auteur,
+      contenu
+    };
+
+    // Ajout du commentaire
+    tache.commentaires.push(commentaire);
+
+    // Historique
+    tache.historiqueModifications.push({
+      champModifié: "commentaires",
+      ancienneValeur: null,
+      nouvelleValeur: JSON.stringify(commentaire),
+      date: new Date()
+    });
+
+    await tache.save();
+
+    res.status(201).json({
+      message: "Commentaire ajouté avec succès",
+      commentaire: tache.commentaires.at(-1)
+    });
 
   } catch (err) {
+    console.error("Erreur POST commentaire :", err);
     res.status(500).json({
       error: "Erreur lors de l'ajout du commentaire."
     });
