@@ -17,15 +17,47 @@ const express = require('express');
 const router = express.Router();
 const Tache = require('../models/Tache');
 
-// Route pour récupérer toutes les tâches
+// Route pour récupérer les tâches avec filtres
 router.get('/taches', async (req, res) => {
   try {
-    const taches = await Tache.find();
+    const {
+      statut,
+      priorite,
+      categorie,
+      etiquette,
+      avant,
+      apres,
+      q
+    } = req.query;
+
+    const filter = {};
+
+    if (statut) filter.statut = statut;
+    if (priorite) filter.priorite = priorite;
+    if (categorie) filter.categorie = categorie;
+    if (etiquette) filter.etiquettes = etiquette; 
+
+    if (avant || apres) {
+      filter.dateLimite = {};
+      if (avant) filter.dateLimite.$lte = new Date(avant);
+      if (apres) filter.dateLimite.$gte = new Date(apres);
+    }
+
+    if (q) {
+      filter.$or = [
+        { titre: { $regex: q, $options: 'i' } },
+        { description: { $regex: q, $options: 'i' } }
+      ];
+    }
+
+    const taches = await Tache.find(filter);
     res.json(taches);
+
   } catch (err) {
     res.status(500).json({ error: 'Erreur lors de la récupération des tâches.' });
   }
 });
+
 
 //route pour recup 1 seul tache by is
 router.get('/tache/:id', async(req, res)=>{
