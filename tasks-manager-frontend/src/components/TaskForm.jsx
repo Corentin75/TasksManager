@@ -1,17 +1,18 @@
 import { useState } from 'react';
 import './TaskForm.css';
 
-function TaskForm({ onClose, onSave, apiUrl, initialData = null }) {
+const API_URL = import.meta.env.VITE_API_URL;
+
+function TaskForm({ onClose, onSave, initialData }) {
   const [formData, setFormData] = useState({
     titre: initialData?.titre || '',
     description: initialData?.description || '',
     statut: initialData?.statut || 'À faire',
     priorite: initialData?.priorite || 'Moyenne',
     categorie: initialData?.categorie || '',
-    echeance: initialData?.echeance ? initialData.echeance.split('T')[0] : '',
+    echeance: initialData?.echeance?.slice(0, 10) || '',
     etiquettes: initialData?.etiquettes?.join(', ') || ''
   });
-
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -26,38 +27,40 @@ function TaskForm({ onClose, onSave, apiUrl, initialData = null }) {
 
     const taskData = {
       ...formData,
-      etiquettes: formData.etiquettes 
+      etiquettes: formData.etiquettes
         ? formData.etiquettes.split(',').map(t => t.trim()).filter(Boolean)
         : []
     };
 
-    const url = initialData
-      ? `${apiUrl}/taches/${initialData._id}`   // EDIT
-      : `${apiUrl}/nouvelletache`;             // CREATION
-
-    const method = initialData ? 'PUT' : 'POST';
-
     try {
-      await fetch(url, {
-        method,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(taskData)
-      });
+      if (initialData?._id) {
+        // Edit existing task
+        await fetch(`${API_URL}/taches/${initialData._id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(taskData)
+        });
+      } else {
+        // Create new task
+        await fetch(`${API_URL}/nouvelletache`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(taskData)
+        });
+      }
 
       onSave();
       onClose();
-
     } catch (err) {
-      console.error('Erreur lors de l’enregistrement :', err);
+      console.error('Erreur lors de la sauvegarde :', err);
     }
   };
-
 
   return (
     <div className="task-form-overlay">
       <div className="task-form-container">
         <div className="form-header">
-          <h2>✨ Nouvelle Tâche</h2>
+          <h2>{initialData?._id ? '✏️ Modifier la tâche' : '✨ Nouvelle Tâche'}</h2>
           <button className="btn-close" onClick={onClose}>✕</button>
         </div>
 
@@ -70,7 +73,6 @@ function TaskForm({ onClose, onSave, apiUrl, initialData = null }) {
               name="titre"
               value={formData.titre}
               onChange={handleChange}
-              placeholder="Ex: Finaliser le rapport"
             />
           </div>
 
@@ -82,7 +84,6 @@ function TaskForm({ onClose, onSave, apiUrl, initialData = null }) {
               value={formData.description}
               onChange={handleChange}
               rows="4"
-              placeholder="Détails de la tâche..."
             />
           </div>
 
@@ -153,17 +154,15 @@ function TaskForm({ onClose, onSave, apiUrl, initialData = null }) {
               name="etiquettes"
               value={formData.etiquettes}
               onChange={handleChange}
-              placeholder="Ex: frontend, urgent, important (séparées par des virgules)"
+              placeholder="Ex: frontend, urgent, important"
             />
             <small>Séparez les étiquettes par des virgules</small>
           </div>
 
           <div className="form-actions">
-            <button onClick={onClose} className="btn-secondary">
-              Annuler
-            </button>
+            <button onClick={onClose} className="btn-secondary">Annuler</button>
             <button onClick={handleSubmit} className="btn-primary">
-              {initialData ? "💾 Modifier la tâche" : "✓ Créer la tâche"}
+              ✓ {initialData?._id ? 'Mettre à jour' : 'Créer la tâche'}
             </button>
           </div>
         </div>

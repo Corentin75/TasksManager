@@ -1,8 +1,10 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './TaskCard.css';
 
 function TaskCard({ tache, onDelete, onEdit }) {
   const [showDetails, setShowDetails] = useState(false);
+  const navigate = useNavigate();
 
   const getPriorityColor = (priorite) => {
     switch (priorite?.toLowerCase()) {
@@ -22,13 +24,21 @@ function TaskCard({ tache, onDelete, onEdit }) {
     });
   };
 
+  const handleCardClick = (e) => {
+    // Empêcher la navigation si on clique sur un bouton
+    if (e.target.closest('button')) {
+      return;
+    }
+    navigate(`/taches/${tache._id}`);
+  };
+
   return (
-    <div className="task-card">
+    <div className="task-card" onClick={handleCardClick} style={{ cursor: 'pointer' }}>
       <div className="task-card-header">
         <div className="task-title-row">
           <h3 className="task-title">{tache.titre}</h3>
           {tache.priorite && (
-            <span 
+            <span
               className="priority-badge"
               style={{ backgroundColor: getPriorityColor(tache.priorite) }}
             >
@@ -37,16 +47,22 @@ function TaskCard({ tache, onDelete, onEdit }) {
           )}
         </div>
         <div className="task-actions">
-          <button 
+          <button
             className="btn-icon"
-            onClick={() => onEdit(tache)}
+            onClick={(e) => {
+              e.stopPropagation();
+              onEdit(tache);
+            }}
             title="Modifier"
           >
             ✏️
           </button>
-          <button 
+          <button
             className="btn-icon btn-danger"
-            onClick={() => onDelete(tache._id)}
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete(tache._id);
+            }}
             title="Supprimer"
           >
             🗑️
@@ -82,9 +98,12 @@ function TaskCard({ tache, onDelete, onEdit }) {
 
       {tache.sousTaches && tache.sousTaches.length > 0 && (
         <div className="subtasks-section">
-          <button 
+          <button
             className="subtasks-toggle"
-            onClick={() => setShowDetails(!showDetails)}
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowDetails(!showDetails);
+            }}
           >
             {showDetails ? '▼' : '▶'} Sous-tâches ({tache.sousTaches.length})
           </button>
@@ -92,8 +111,8 @@ function TaskCard({ tache, onDelete, onEdit }) {
             <ul className="subtasks-list">
               {tache.sousTaches.map((st, idx) => (
                 <li key={idx} className="subtask-item">
-                  <input type="checkbox" checked={st.terminee} readOnly />
-                  <span className={st.terminee ? 'completed' : ''}>
+                  <input type="checkbox" checked={st.statut === 'Terminée'} readOnly />
+                  <span className={st.statut === 'Terminée' ? 'completed' : ''}>
                     {st.titre}
                   </span>
                 </li>

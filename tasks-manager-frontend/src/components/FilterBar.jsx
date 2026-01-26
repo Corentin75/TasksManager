@@ -72,8 +72,65 @@ function FilterBar({ filters, onFilterChange }) {
         </select>
       </div>
 
+      <div className="filter-group">
+        <label>🏷️ Étiquette</label>
+        <input
+          type="text"
+          value={filters.etiquette}
+          onChange={(e) => handleChange('etiquette', e.target.value)}
+          className="filter-input"
+          placeholder="urgent"
+        />
+      </div>
+
+      <div className="filter-group">
+        <label>📅 Avant</label>
+        <input
+          type="date"
+          value={filters.avant}
+          onChange={(e) => handleChange('avant', e.target.value)}
+          className="filter-input"
+        />
+      </div>
+
+      <div className="filter-group">
+        <label>📅 Après</label>
+        <input
+          type="date"
+          value={filters.apres}
+          onChange={(e) => handleChange('apres', e.target.value)}
+          className="filter-input"
+        />
+      </div>
+
+      <div className="filter-group">
+        <label>🔃 Trier par</label>
+        <select
+          value={filters.tri}
+          onChange={(e) => handleChange('tri', e.target.value)}
+          className="filter-select"
+        >
+          <option value="">Aucun</option>
+          <option value="echeance">Échéance</option>
+          <option value="priorite">Priorité</option>
+          <option value="dateCreation">Date de création</option>
+        </select>
+      </div>
+
+      <div className="filter-group">
+        <label>↕️ Ordre</label>
+        <select
+          value={filters.ordre}
+          onChange={(e) => handleChange('ordre', e.target.value)}
+          className="filter-select"
+        >
+          <option value="asc">Ascendant</option>
+          <option value="desc">Descendant</option>
+        </select>
+      </div>
+
       {hasActiveFilters && (
-        <button 
+        <button
           className="btn-clear-filters"
           onClick={clearFilters}
         >
