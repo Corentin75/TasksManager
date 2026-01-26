@@ -178,6 +178,135 @@ router.put('/taches/:id', async (req, res) => {
 
 
 
+//-----------------------------COMMENTAIRE-----------------------------------
+
+
+
+// Ajouter un commentaire à une tâche
+router.post('/taches/:id/commentaires', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { auteur, contenu } = req.body;
+
+    if (!auteur || !contenu) {
+      return res.status(400).json({
+        error: "L'auteur et le contenu sont obligatoires."
+      });
+    }
+
+    const commentaire = {
+      auteur,
+      contenu
+    };
+
+    const tache = await Tache.findByIdAndUpdate(
+      id,
+      { $push: { commentaires: commentaire } },
+      { new: true }
+    );
+
+    if (!tache) {
+      return res.status(404).json({ error: "Tâche introuvable." });
+    }
+
+    res.status(201).json(tache.commentaires);
+
+  } catch (err) {
+    res.status(500).json({
+      error: "Erreur lors de l'ajout du commentaire."
+    });
+  }
+});
+
+
+// Modifier un commentaire
+router.put('/taches/:tacheId/commentaires/:commentaireId', async (req, res) => {
+  try {
+    const { tacheId, commentaireId } = req.params;
+    const { contenu } = req.body;
+
+    if (!contenu) {
+      return res.status(400).json({ message: "Le contenu est obligatoire." });
+    }
+
+    const tache = await Tache.findById(tacheId);
+
+    if (!tache) {
+      return res.status(404).json({ message: "Tâche non trouvée." });
+    }
+
+    const commentaire = tache.commentaires.id(commentaireId);
+
+    if (!commentaire) {
+      return res.status(404).json({ message: "Commentaire non trouvé." });
+    }
+
+    // Historique
+    tache.historiqueModifications.push({
+      champModifié: "commentaire",
+      ancienneValeur: commentaire.contenu,
+      nouvelleValeur: contenu,
+      date: new Date()
+    });
+
+    // Update
+    commentaire.contenu = contenu;
+
+    await tache.save();
+
+    res.json({
+      message: "Commentaire modifié avec succès",
+      commentaire
+    });
+
+  } catch (err) {
+    console.error("Erreur PUT commentaire :", err);
+    res.status(500).json({ error: "Erreur lors de la modification du commentaire." });
+  }
+});
+
+
+// Supprimer un commentaire
+router.delete('/taches/:tacheId/commentaires/:commentaireId', async (req, res) => {
+  try {
+    const { tacheId, commentaireId } = req.params;
+
+    const tache = await Tache.findById(tacheId);
+
+    if (!tache) {
+      return res.status(404).json({ message: "Tâche non trouvée." });
+    }
+
+    const commentaire = tache.commentaires.id(commentaireId);
+
+    if (!commentaire) {
+      return res.status(404).json({ message: "Commentaire non trouvé." });
+    }
+
+    // Historique
+    tache.historiqueModifications.push({
+      champModifié: "commentaire",
+      ancienneValeur: commentaire.contenu,
+      nouvelleValeur: "Commentaire supprimé",
+      date: new Date()
+    });
+
+    // Suppression
+    commentaire.deleteOne();
+
+    await tache.save();
+
+    res.json({
+      message: "Commentaire supprimé avec succès"
+    });
+
+  } catch (err) {
+    console.error("Erreur DELETE commentaire :", err);
+    res.status(500).json({ error: "Erreur lors de la suppression du commentaire." });
+  }
+});
+
+
 
 
 //-----------------------------SOUS-TACHE---------------------------------- 
