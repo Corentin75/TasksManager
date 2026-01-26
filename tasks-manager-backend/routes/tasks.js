@@ -314,23 +314,38 @@ router.delete('/taches/:tacheId/commentaires/:commentaireId', async (req, res) =
 
 
 //route pour ajouter une sous-tache dans la tache 
-router.post('/taches/:id/sous-taches', async (req, res) => { // NE PAS OUBLIER HISTORIQUE
+router.post('/taches/:id/sous-taches', async (req, res) => {
   try {
     const { id } = req.params;
-    const nouvelleSousTache = req.body;  // { titre, statut, echeance }
+    const nouvelleSousTache = req.body;
 
     const tache = await Tache.findById(id);
-    if (!tache) return res.status(404).json({ message: "Tâche non trouvée" });
+    if (!tache) {
+      return res.status(404).json({ message: "Tâche non trouvée" });
+    }
 
     tache.sousTaches.push(nouvelleSousTache);
 
+    // Historique
+    tache.historiqueModifications.push({
+      champModifié: "sousTaches",
+      ancienneValeur: null,
+      nouvelleValeur: JSON.stringify(nouvelleSousTache),
+      date: new Date()
+    });
+
     await tache.save();
-    res.status(201).json(tache);
+
+    res.status(201).json({
+      message: "Sous-tâche ajoutée avec succès",
+      sousTache: tache.sousTaches.at(-1)
+    });
 
   } catch (err) {
     res.status(500).json({ error: "Erreur lors de l'ajout de la sous-tâche." });
   }
 });
+
 
 //route pour modifier une sous-tache : 
 router.put('/taches/:id/sous-taches/:subId', async (req, res) => {
@@ -380,19 +395,32 @@ router.put('/taches/:id/sous-taches/:subId', async (req, res) => {
 });
 
 //supprimer une sous-tache :
-router.delete('/taches/:id/sous-taches/:subId', async (req, res) => { // NE PAS OUBLIER HISTORIQUE
+router.delete('/taches/:id/sous-taches/:subId', async (req, res) => {
   try {
     const { id, subId } = req.params;
 
     const tache = await Tache.findById(id);
-    if (!tache) return res.status(404).json({ message: "Tâche non trouvée" });
+    if (!tache) {
+      return res.status(404).json({ message: "Tâche non trouvée" });
+    }
 
     const sousTache = tache.sousTaches.id(subId);
-    if (!sousTache) return res.status(404).json({ message: "Sous-tâche non trouvée" });
+    if (!sousTache) {
+      return res.status(404).json({ message: "Sous-tâche non trouvée" });
+    }
 
-    sousTache.deleteOne(); // supprime proprement un élément imbriqué
+    // Historique AVANT suppression
+    tache.historiqueModifications.push({
+      champModifié: "sousTaches",
+      ancienneValeur: JSON.stringify(sousTache),
+      nouvelleValeur: "Sous-tâche supprimée",
+      date: new Date()
+    });
+
+    sousTache.deleteOne();
 
     await tache.save();
+
     res.json({ message: "Sous-tâche supprimée avec succès" });
 
   } catch (err) {
