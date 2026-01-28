@@ -159,7 +159,7 @@ export default function TaskDetails() {
                     <strong>{hist.champModifié}</strong>
                     <div className="history-values">
                       <span className="old-value">{hist.ancienneValeur}</span>
-                      <span className="arrow">→</span>
+                      <span className="arrow">{">"}</span>
                       <span className="new-value">{hist.nouvelleValeur}</span>
                     </div>
                   </div>

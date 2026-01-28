@@ -238,7 +238,7 @@
   background: #fef2f2;
   padding: 4px 8px;
   border-radius: 4px;
-  max-width: 200px;
+  max-width: 1000px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -254,7 +254,7 @@
   background: #f0fdf4;
   padding: 4px 8px;
   border-radius: 4px;
-  max-width: 200px;
+  max-width: 1000px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
