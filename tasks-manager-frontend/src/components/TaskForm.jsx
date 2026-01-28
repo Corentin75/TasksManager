@@ -11,18 +11,54 @@ function TaskForm({ onClose, onSave, initialData }) {
     priorite: initialData?.priorite || 'Moyenne',
     categorie: initialData?.categorie || '',
     echeance: initialData?.echeance?.slice(0, 10) || '',
-    etiquettes: initialData?.etiquettes?.join(', ') || ''
+    etiquettes: initialData?.etiquettes?.join(', ') || '',
+    auteur: {
+      prenom: initialData?.auteur?.prenom || '',
+      nom: initialData?.auteur?.nom || ''
+    }
   });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+
+    if (name === 'prenom' || name === 'nom') {
+      setFormData(prev => ({
+        ...prev,
+        auteur: {
+          ...prev.auteur,
+          [name]: value
+        }
+      }));
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        [name]: value
+      }));
+    }
   };
 
   const handleSubmit = async () => {
-    if (!formData.titre) {
-      alert('Le titre est requis');
-      return;
+    const requiredFields = {
+      titre: 'Le titre est requis',
+      description: 'La description est requise',
+      'auteur.prenom': 'Votre prénom est requis',
+      'auteur.nom': 'Votre nom est requis'
+    };
+
+    for (const field in requiredFields) {
+      let value;
+
+      if (field.startsWith('auteur.')) {
+        const key = field.split('.')[1];
+        value = formData.auteur[key];
+      } else {
+        value = formData[field];
+      }
+
+      if (!value?.trim()) {
+        alert(requiredFields[field]);
+        return;
+      }
     }
 
     const taskData = {
@@ -34,14 +70,14 @@ function TaskForm({ onClose, onSave, initialData }) {
 
     try {
       if (initialData?._id) {
-        // Edit existing task
+        // edits existing task
         await fetch(`${API_URL}/taches/${initialData._id}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(taskData)
         });
       } else {
-        // Create new task
+        // creates new task
         await fetch(`${API_URL}/nouvelletache`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -60,11 +96,29 @@ function TaskForm({ onClose, onSave, initialData }) {
     <div className="task-form-overlay">
       <div className="task-form-container">
         <div className="form-header">
-          <h2>{initialData?._id ? '✏️ Modifier la tâche' : '✨ Nouvelle Tâche'}</h2>
+          <h2>{initialData?._id ? 'Modifier la tâche' : 'Nouvelle tâche'}</h2>
           <button className="btn-close" onClick={onClose}>✕</button>
         </div>
 
         <div className="task-form">
+          <div className="form-group">
+            <label>Votre prénom *</label>
+            <input
+              name="prenom"
+              value={formData.auteur.prenom}
+              onChange={handleChange}
+            />
+          </div>
+
+          <div className="form-group">
+            <label>Votre nom *</label>
+            <input
+              name="nom"
+              value={formData.auteur.nom}
+              onChange={handleChange}
+            />
+          </div>
+
           <div className="form-group">
             <label htmlFor="titre">Titre *</label>
             <input
@@ -77,7 +131,7 @@ function TaskForm({ onClose, onSave, initialData }) {
           </div>
 
           <div className="form-group">
-            <label htmlFor="description">Description</label>
+            <label htmlFor="description">Description *</label>
             <textarea
               id="description"
               name="description"
@@ -127,10 +181,10 @@ function TaskForm({ onClose, onSave, initialData }) {
                 onChange={handleChange}
               >
                 <option value="">Sélectionner...</option>
-                <option value="Travail">Travail</option>
-                <option value="Personnel">Personnel</option>
-                <option value="Urgent">Urgent</option>
-                <option value="Projet">Projet</option>
+                <option value="Backend">Backend</option>
+                <option value="Frontend">Frontend</option>
+                <option value="Database">Database</option>
+                <option value="Documentation">Documentation</option>
               </select>
             </div>
 
@@ -154,7 +208,7 @@ function TaskForm({ onClose, onSave, initialData }) {
               name="etiquettes"
               value={formData.etiquettes}
               onChange={handleChange}
-              placeholder="Ex: frontend, urgent, important"
+              placeholder="Ex: api, bug, tests"
             />
             <small>Séparez les étiquettes par des virgules</small>
           </div>
@@ -162,7 +216,7 @@ function TaskForm({ onClose, onSave, initialData }) {
           <div className="form-actions">
             <button onClick={onClose} className="btn-secondary">Annuler</button>
             <button onClick={handleSubmit} className="btn-primary">
-              ✓ {initialData?._id ? 'Mettre à jour' : 'Créer la tâche'}
+              {initialData?._id ? 'Mettre à jour' : 'Créer la tâche'}
             </button>
           </div>
         </div>

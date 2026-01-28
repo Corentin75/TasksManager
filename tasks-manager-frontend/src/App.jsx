@@ -6,7 +6,7 @@ import FilterBar from './components/FilterBar';
 import TaskDetails from './components/TaskDetails';
 import './App.css';
 
-// Configuration de l'API URL depuis les variables d'environnement
+// configuration de l'API URL depuis les variables d'env
 const API_URL = import.meta.env.VITE_API_URL;
 
 function App() {
@@ -72,12 +72,12 @@ function App() {
   return (
     <div className="app-container">
       <header className="app-header">
-        <h1>📋 Gestionnaire de Tâches</h1>
+        <h1>Gestionnaire de tâches</h1>
         <button
           className="btn-primary"
           onClick={() => setShowForm(!showForm)}
         >
-          {showForm ? '✕ Fermer' : '+ Nouvelle Tâche'}
+          {'+ Nouvelle tâche'}
         </button>
       </header>
 
@@ -89,7 +89,7 @@ function App() {
           }}
           onSave={fetchTaches}
           apiUrl={API_URL}
-          initialData={taskToEdit}       // 🔥 important
+          initialData={taskToEdit}
         />
       )}
 

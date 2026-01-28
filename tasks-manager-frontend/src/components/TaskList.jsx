@@ -5,9 +5,9 @@ function TaskList({ taches, onDelete, onEdit }) {
   if (taches.length === 0) {
     return (
       <div className="empty-state">
-        <div className="empty-icon">📭</div>
+        <h1>{":("}</h1><br></br><br></br>
         <h3>Aucune tâche trouvée</h3>
-        <p>Commencez par créer une nouvelle tâche ou ajustez vos filtres</p>
+        <p>Créez une nouvelle tâche ou ajustez vos filtres</p>
       </div>
     );
   }

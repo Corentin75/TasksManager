@@ -89,7 +89,7 @@ export default function Commentaires({ tache, setTache }) {
   return (
     <div className="commentaires-section">
       <div className="section-header">
-        <h2>💬 Commentaires</h2>
+        <h2> Commentaires</h2>
         <button 
           className="btn-add"
           onClick={() => setShowForm(!showForm)}
@@ -168,7 +168,7 @@ export default function Commentaires({ tache, setTache }) {
                       onClick={() => modifierCommentaire(comment._id)}
                       className="btn-save"
                     >
-                      ✓ Sauvegarder
+                      Sauvegarder
                     </button>
                     <button
                       onClick={() => {
@@ -188,7 +188,7 @@ export default function Commentaires({ tache, setTache }) {
           ))}
         </div>
       ) : (
-        <p className="empty-message">Aucun commentaire pour le moment</p>
+        <p className="empty-message">Aucun commentaire trouvé</p>
       )}
     </div>
   );
