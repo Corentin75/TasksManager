@@ -25,7 +25,7 @@ function TaskCard({ tache, onDelete, onEdit }) {
   };
 
   const handleCardClick = (e) => {
-    // Empêcher la navigation si on clique sur un bouton
+    // pour empêcher la navigation si on clique sur un bouton (modifier ou supprimer)
     if (e.target.closest('button')) {
       return;
     }
@@ -74,14 +74,14 @@ function TaskCard({ tache, onDelete, onEdit }) {
 
       {tache.categorie && (
         <div className="task-category">
-          <span className="category-tag">📁 {tache.categorie}</span>
+          <span className="category-tag">{tache.categorie}</span>
         </div>
       )}
 
       {tache.echeance && (
         <div className="task-deadline">
           <span className="deadline-text">
-            📅 {formatDate(tache.echeance)}
+            {formatDate(tache.echeance)}
           </span>
         </div>
       )}
@@ -105,7 +105,7 @@ function TaskCard({ tache, onDelete, onEdit }) {
               setShowDetails(!showDetails);
             }}
           >
-            {showDetails ? '▼' : '▶'} Sous-tâches ({tache.sousTaches.length})
+            {showDetails ? 'v' : '>'} Sous-tâches ({tache.sousTaches.length})
           </button>
           {showDetails && (
             <ul className="subtasks-list">
@@ -124,7 +124,7 @@ function TaskCard({ tache, onDelete, onEdit }) {
 
       {tache.commentaires && tache.commentaires.length > 0 && (
         <div className="comments-count">
-          💬 {tache.commentaires.length} commentaire{tache.commentaires.length > 1 ? 's' : ''}
+          {tache.commentaires.length} commentaire{tache.commentaires.length > 1 ? 's' : ''}
         </div>
       )}
     </div>

@@ -19,7 +19,7 @@ function FilterBar({ filters, onFilterChange }) {
   return (
     <div className="filter-bar">
       <div className="filter-group">
-        <label>🔍 Rechercher</label>
+        <label>Rechercher...</label>
         <input
           type="text"
           placeholder="Titre ou description..."
@@ -30,7 +30,7 @@ function FilterBar({ filters, onFilterChange }) {
       </div>
 
       <div className="filter-group">
-        <label>📊 Statut</label>
+        <label>Statut</label>
         <select
           value={filters.statut}
           onChange={(e) => handleChange('statut', e.target.value)}
@@ -44,7 +44,7 @@ function FilterBar({ filters, onFilterChange }) {
       </div>
 
       <div className="filter-group">
-        <label>⚡ Priorité</label>
+        <label>Priorité</label>
         <select
           value={filters.priorite}
           onChange={(e) => handleChange('priorite', e.target.value)}
@@ -58,22 +58,22 @@ function FilterBar({ filters, onFilterChange }) {
       </div>
 
       <div className="filter-group">
-        <label>📁 Catégorie</label>
+        <label>Catégorie</label>
         <select
           value={filters.categorie}
           onChange={(e) => handleChange('categorie', e.target.value)}
           className="filter-select"
         >
           <option value="">Toutes</option>
-          <option value="Travail">Travail</option>
-          <option value="Personnel">Personnel</option>
-          <option value="Urgent">Urgent</option>
-          <option value="Projet">Projet</option>
+          <option value="Backend">Backend</option>
+          <option value="Frontend">Frontend</option>
+          <option value="Database">Database</option>
+          <option value="Documentation">Documentation</option>
         </select>
       </div>
 
       <div className="filter-group">
-        <label>🏷️ Étiquette</label>
+        <label>Étiquette</label>
         <input
           type="text"
           value={filters.etiquette}
@@ -84,7 +84,7 @@ function FilterBar({ filters, onFilterChange }) {
       </div>
 
       <div className="filter-group">
-        <label>📅 Avant</label>
+        <label>Avant...</label>
         <input
           type="date"
           value={filters.avant}
@@ -94,7 +94,7 @@ function FilterBar({ filters, onFilterChange }) {
       </div>
 
       <div className="filter-group">
-        <label>📅 Après</label>
+        <label>Après...</label>
         <input
           type="date"
           value={filters.apres}
@@ -104,7 +104,7 @@ function FilterBar({ filters, onFilterChange }) {
       </div>
 
       <div className="filter-group">
-        <label>🔃 Trier par</label>
+        <label>Trier par...</label>
         <select
           value={filters.tri}
           onChange={(e) => handleChange('tri', e.target.value)}
@@ -118,7 +118,7 @@ function FilterBar({ filters, onFilterChange }) {
       </div>
 
       <div className="filter-group">
-        <label>↕️ Ordre</label>
+        <label>Ordre</label>
         <select
           value={filters.ordre}
           onChange={(e) => handleChange('ordre', e.target.value)}
@@ -134,7 +134,7 @@ function FilterBar({ filters, onFilterChange }) {
           className="btn-clear-filters"
           onClick={clearFilters}
         >
-          ✕ Effacer les filtres
+          ✕ &nbsp; Effacer les filtres
         </button>
       )}
     </div>

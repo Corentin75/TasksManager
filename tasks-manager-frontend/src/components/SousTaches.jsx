@@ -25,7 +25,7 @@ export default function SousTaches({ tache, setTache }) {
 
       if (!res.ok) throw new Error('Erreur lors de l\'ajout');
 
-      // Recharger la tâche complète
+      // pour recharger la tâche complète
       const updatedRes = await fetch(`${API_URL}/tache/${tache._id}`);
       const updatedTache = await updatedRes.json();
       setTache(updatedTache);
@@ -75,7 +75,7 @@ export default function SousTaches({ tache, setTache }) {
   return (
     <div className="sous-taches-section">
       <div className="section-header">
-        <h2>📝 Sous-tâches</h2>
+        <h2>Sous-tâches</h2>
         <button 
           className="btn-add"
           onClick={() => setShowForm(!showForm)}
@@ -132,7 +132,7 @@ export default function SousTaches({ tache, setTache }) {
           ))}
         </ul>
       ) : (
-        <p className="empty-message">Aucune sous-tâche pour le moment</p>
+        <p className="empty-message">Aucune sous-tâche trouvée</p>
       )}
     </div>
   );

@@ -1,16 +1,16 @@
-# 🚀 Guide d'installation - Gestionnaire de Tâches
+# Guide d'installation - Gestionnaire de tâches
 
-## 📋 Prérequis
+## Prérequis
 
 - Docker Desktop installé (et ouvert en arrière plan si vous êtes sur windows)
 - Docker Compose v2+
 
-## 🔧 Configuration initiale
+## Configuration initiale
 
 Le backend s'exécute dans un container Docker sur le port 3000 à l'intérieur du container.
 Pour éviter les conflits avec votre serveur de développement local (port 3000), le port 3000 du container est mappé sur le port 3001 de votre machine locale.
 
-Pour évtier toutes confusions, une bases de données MongoDB est dédié à la "production" sous Docker, et une autre est dédié au développement en local.
+Pour éviter toutes confusions, une base de données MongoDB est dédiée à la "production" sous Docker, et une autre est dédiée au développement en local.
 
 Pour cloner le dépot :
 ```bash
@@ -34,7 +34,7 @@ printf "admin" > secrets/mongo_root_user.txt
 printf "votre-mot-de-passe-securise" > secrets/mongo_root_password.txt
 ```
 
-⚠️ **Important** : Remplacez `votre-mot-de-passe-securise` par un mot de passe fort ! Deplus veuillez ne jamais le changer une fois l'application lancer une fois, cela risque de donner une erreur d'acces à la base de données.
+**Important** : Remplacez `votre-mot-de-passe-securise` par un mot de passe fort ! De plus, veuillez ne jamais le changer une fois l'application lancée une fois, cela risque de donner une erreur d'accès à la base de données.
 
 ### 3. Créer les fichiers .env
 
@@ -97,7 +97,7 @@ secrets/
 **/.env.local
 ```
 
-## 🐳 Lancement de l'application (sous Docker)
+## Lancement de l'application (sous Docker)
 
 ### Construire et démarrer tous les services
 
@@ -125,7 +125,7 @@ docker-compose down
 
 OU
 
-Ctrl+C dans le terminal ou est lancé le container.
+Ctrl+C dans le terminal où est lancé le container.
 
 ### Tout supprimer (y compris les volumes)
 
@@ -133,14 +133,15 @@ Ctrl+C dans le terminal ou est lancé le container.
 docker-compose down -v
 ```
 
-## 🌐 Accès à l'application
+## Accès à l'application
 
-Une fois démarré, l'application est accessible sur :
+Une fois démarrée, l'application est accessible sur :
 
-Pour au frontend local :  **http://localhost:8080**
+Accès au frontend local :  **http://localhost:8080**
+
 Accès au backend local : **http://localhost:3001**
 
-## 🔍 Vérification du fonctionnement
+## Vérification du fonctionnement
 
 ### Vérifier l'état des services
 
@@ -165,7 +166,7 @@ Devrait retourner :
 }
 ```
 
-## 🔐 Gestion des secrets - Explications
+## Gestion des secrets - Explications
 
 ### Secrets Docker
 
@@ -188,7 +189,7 @@ Les fichiers `.env` contiennent les configurations non-sensibles :
 2. **Variables .env** (configuration) : URLs, ports, options
 3. **Code** (logique) : aucune donnée sensible
 
-## 🛠️ Développement local (Sans Docker)
+## Développement local (Sans Docker)
 
 Pour le développement local (sans Docker) :
 
@@ -209,37 +210,56 @@ npm install
 npm run dev
 ```
 
-**⚠️ Attention** l'accès à l'application n'est pas le même qu'en production :
-Le frontend est dispo sur **http://localhost:5173**
+**Attention** : L'accès à l'application n'est pas le même qu'en production :
+
+Le frontend se trouve sur **http://localhost:5173**
+
 Le backend se trouve sur **http://localhost:3000**
 
-## 📦 Structure du projet
+## Structure du projet
 
 ```
 .
-├── backend/
+├── tasks-manager-backend/
+│   ├── models/
+│   │   └── Tache.js
+|   ├── routes/
+│   │   └── tasks.js
+│   ├── .dockerignore
+│   ├── .env.example
+│   ├── .env.local.example
+│   ├── .gitignore
 │   ├── Dockerfile
-│   ├── .env
-|   ├── .env.local
 │   ├── index.js
-│   ├── routes/
+│   ├── package-lock.json
 │   └── package.json
-├── frontend/
+├── tasks-manager-frontend/
+│   ├── public/
+│   │   └── logo.jpg
+|   ├── src/
+│   │   ├── components/
+│   │   ├── App.css
+│   │   ├── App.jsx
+│   │   ├── index.css
+│   │   └── main.jsx
+│   ├── .dockerignore
+│   ├── .env.example
+│   ├── .env.local.example
+│   ├── .gitignore
 │   ├── Dockerfile
+│   ├── eslint.config.js
+│   ├── index.html
 │   ├── nginx.conf
-│   ├── .env
-|   ├── .env.local
-│   ├── src/
-│   └── package.json
-├── secrets/
-│   ├── mongo_root_user.txt
-│   └── mongo_root_password.txt
-├── docker-compose.yml
+│   ├── package-lock.json
+│   ├── package.json
+│   └── vite.config.js
 ├── .gitignore
-└── INSTALLATION.md
+├── docker-compose.yaml
+├── INSTALLATION.md
+└── README.md
 ```
 
-## 🐛 Dépannage
+## Dépannage
 
 ### Les conteneurs ne démarrent pas
 
@@ -266,14 +286,14 @@ ls -la secrets/
 
 Vérifiez la configuration nginx et les variables d'environnement du frontend.
 
-## 🎓 Points clés pour l'exercice
+## Points clés pour l'exercice
 
-✅ **Images Docker** : Dockerfiles optimisés multi-stage pour le frontend
+- **Images Docker** : Dockerfiles optimisés multi-stage pour le frontend
 
-✅ **Multi-services** : 3 services (MongoDB, Backend, Frontend) orchestrés
+- **Multi-services** : 3 services (MongoDB, Backend, Frontend) orchestrés
 
-✅ **Gestion des secrets** : Docker Secrets + fichiers .env séparés
+- **Gestion des secrets** : Docker Secrets + fichiers .env séparés
 
-✅ **Sécurité** : Pas de secrets dans le code, utilisateur non-root
+- **Sécurité** : Pas de secrets dans le code, utilisateur non-root
 
-✅ **Production-ready** : Nginx, gestion d'erreurs, graceful shutdown
+- **Production-ready** : Nginx, gestion d'erreurs, graceful shutdown

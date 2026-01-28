@@ -61,9 +61,9 @@ export default function TaskDetails() {
   if (!tache) {
     return (
       <div className="error-container">
-        <h2>❌ Tâche introuvable</h2>
+        <h2>Tâche introuvable</h2>
         <button onClick={() => navigate('/')} className="btn-back">
-          ← Retour à la liste
+          {'<'} Retour à la liste"
         </button>
       </div>
     );
@@ -72,7 +72,7 @@ export default function TaskDetails() {
   return (
     <div className="task-details-container">
       <button onClick={() => navigate('/')} className="btn-back">
-        ← Retour à la liste
+        {'<'} Retour à la liste
       </button>
 
       <div className="task-details-header">
@@ -90,55 +90,50 @@ export default function TaskDetails() {
 
         <div className="metadata-grid">
           <div className="metadata-item">
-            <span className="metadata-label">📊 Statut</span>
-            <span className="metadata-value">{tache.statut}</span>
+            <span className="metadata-label">Auteur</span>
+            <span className="metadata-value">{tache.auteur.prenom} {tache.auteur.nom}</span>
           </div>
 
-          {tache.categorie && (
-            <div className="metadata-item">
-              <span className="metadata-label">📁 Catégorie</span>
-              <span className="metadata-value">{tache.categorie}</span>
-            </div>
-          )}
+          <div className="metadata-item">
+            <span className="metadata-label">Créé le...</span>
+            <span className="metadata-value">{formatDate(tache.dateCreation)}</span>
+          </div>
 
           <div className="metadata-item">
-            <span className="metadata-label">📅 Échéance</span>
+            <span className="metadata-label">Échéance</span>
             <span className="metadata-value">
               {tache.echeance ? formatDate(tache.echeance) : 'Non définie'}
             </span>
           </div>
 
           <div className="metadata-item">
-            <span className="metadata-label">🕐 Créé le</span>
-            <span className="metadata-value">{formatDate(tache.dateCreation)}</span>
+            <span className="metadata-label">Statut</span>
+            <span className="metadata-value">{tache.statut}</span>
           </div>
+
+          {tache.categorie && (
+            <div className="metadata-item">
+              <span className="metadata-label">Catégorie</span>
+              <span className="metadata-value">{tache.categorie}</span>
+            </div>
+          )}
         </div>
 
         {tache.description && (
           <div className="description-section">
-            <h3>📝 Description</h3>
+            <h3>Description</h3>
             <p>{tache.description}</p>
           </div>
         )}
 
         {tache.etiquettes && tache.etiquettes.length > 0 && (
           <div className="tags-section">
-            <h3>🏷️ Étiquettes</h3>
+            <h3>Étiquettes</h3>
             <div className="tags-list">
               {tache.etiquettes.map((tag, idx) => (
                 <span key={idx} className="tag">{tag}</span>
               ))}
             </div>
-          </div>
-        )}
-
-        {tache.auteur && (
-          <div className="author-section">
-            <h3>👤 Auteur</h3>
-            <p>
-              {tache.auteur.prenom} {tache.auteur.nom}
-              {tache.auteur.email && ` (${tache.auteur.email})`}
-            </p>
           </div>
         )}
       </div>
@@ -148,11 +143,11 @@ export default function TaskDetails() {
 
       {tache.historiqueModifications && tache.historiqueModifications.length > 0 && (
         <div className="history-section">
-          <button 
+          <button
             className="history-toggle"
             onClick={() => setShowHistory(!showHistory)}
           >
-            {showHistory ? '▼' : '▶'} Historique des modifications ({tache.historiqueModifications.length})
+            {showHistory ? 'v' : '>'} Historique des modifications ({tache.historiqueModifications.length})
           </button>
 
           {showHistory && (
