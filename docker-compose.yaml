@@ -25,9 +25,9 @@ services:
     networks:
       - taskmanager-network
     ports:
-    - "3001:3000"  # Port 3001 pour Docker, 3000 pour local
+    - "3001:3000"  # 3001 pour Docker, 3000 pour local
     environment:
-      - PORT=3000  # Port interne du conteneur
+      - PORT=3000  # port interne du conteneur
 
   frontend:
     build:

@@ -2,36 +2,30 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const fs = require('fs');
-
+const dotenv = require("dotenv");
 
 const app = express();
 
-const dotenv = require("dotenv");
-
-
-
-// Optionnel : charger .env.local en dev seulement
+// charger les variables d'environnement
+// si on est en dev et que .env.local existe, on le charge
 if (process.env.NODE_ENV !== "production") {
   if (fs.existsSync(".env.local")) {
     dotenv.config({ path: ".env.local" });
     console.log("🔧 Fichier .env.local chargé !");
   }
-}
-else {
-  // Toujours charger .env
-  dotenv.config({ path: '.env' });
+} else {
+  dotenv.config({ path: '.env' }); // en prod, toujours charger .env
 }
 
-// ---- ENV ----
+// variables d'environnement
 const PORT = process.env.PORT;
 const MONGO_DB = process.env.MONGO_DB;
 
-// ---- CORS ----
-
+// CORS et JSON
 app.use(cors({ origin: process.env.CORS_ORIGINS }));
 app.use(express.json());
 
-// ---- Detect Docker ----
+// détection Docker
 function isRunningInDocker() {
   try {
     const cgroup = fs.readFileSync("/proc/1/cgroup", "utf8");
@@ -41,37 +35,34 @@ function isRunningInDocker() {
   }
 }
 
-// ---- Detect credentials inside Docker ----
+// lire des secrets Docker si présents
 function readSecret(name) {
   const file = `/run/secrets/${name}`;
   return fs.existsSync(file) ? fs.readFileSync(file, "utf8").trim() : null;
 }
 
+// construire l'URL MongoDB
 let mongoUrl;
-
 if (isRunningInDocker()) {
   const user = readSecret("mongo_root_user");
   const pass = readSecret("mongo_root_password");
-
   mongoUrl = `mongodb://${user}:${pass}@mongodb:27017/${MONGO_DB}?authSource=admin`;
-
-  console.log("🐳 Backend détecté DANS Docker → Mongo = mongodb");
-
+  console.log("Backend détecté dans Docker -> Mongo = mongodb");
 } else {
   mongoUrl = `mongodb://127.0.0.1:27017/${MONGO_DB}`;
-  console.log("💻 Backend détecté EN LOCAL → Mongo = localhost");
+  console.log("Backend détecté en local -> Mongo = localhost");
 }
 
-// ---- Connexion à MongoDB ----
+// connexion à MongoDB
 mongoose.connect(mongoUrl)
-  .then(() => console.log("✅ Connecté à MongoDB"))
-  .catch(err => console.error("❌ Erreur MongoDB :", err));
+  .then(() => console.log("Connecté à MongoDB"))
+  .catch(err => console.error("Erreur MongoDB :", err));
 
-// Import des routes
+// import des routes
 const tasksRoutes = require('./routes/tasks');
 app.use('/', tasksRoutes);
 
-// Route test
+// route test
 app.get('/', (req, res) => {
   res.json({ 
     message: 'API de gestion des tâches',
@@ -80,13 +71,13 @@ app.get('/', (req, res) => {
   });
 });
 
-// Gestion des erreurs
+// gestion globale des erreurs
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ error: 'Une erreur est survenue' });
 });
 
-// Graceful shutdown
+// graceful shutdown (pour fermeture propre)
 process.on('SIGTERM', () => {
   console.log('SIGTERM reçu, fermeture gracieuse...');
   mongoose.connection.close(() => {
@@ -95,7 +86,7 @@ process.on('SIGTERM', () => {
   });
 });
 
-// Serveur
+// lancement du serveur
 app.listen(PORT, () => {
-  console.log(`🚀 Serveur lancé !`);
+  console.log(`Serveur lancé !`);
 });
