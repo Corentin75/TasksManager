@@ -116,7 +116,7 @@ function FilterBar({ filters, onFilterChange }) {
           <option value="dateCreation">Date de création</option>
         </select>
       </div>
-
+      
       <div className="filter-group">
         <label>Ordre</label>
         <select
