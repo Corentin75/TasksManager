@@ -40,7 +40,7 @@ router.get('/taches', async (req, res) => {
 });
 
 // récupérer une tâche par son ID
-router.get('/tache/:id', async(req, res)=>{
+router.get('/tache/:id', async (req, res) => {
   try {
     const tache = await Tache.findById(req.params.id);
     res.json(tache);
@@ -53,7 +53,8 @@ router.get('/tache/:id', async(req, res)=>{
 router.post('/tache/:id/delete', async (req, res) => {
   try {
     const result = await Tache.deleteOne({ _id: req.params.id });
-    if (result.deletedCount === 0) return res.status(404).json({ message: "Tâche non trouvée" });
+    if (result.deletedCount === 0)
+      return res.status(404).json({ message: "Tâche non trouvée" });
     res.json({ message: "Tâche supprimée avec succès" });
   } catch (err) {
     res.status(500).json({ error: 'Erreur lors de la suppression de la tâche.' });
